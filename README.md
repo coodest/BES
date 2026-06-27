@@ -48,8 +48,8 @@ BES decomposes the latent space into **invariant** factors (class-determining st
 
 Nodes near class boundaries are identified via a **Mahalanobis slab criterion**:
 
-```
-B = { x | |(μ_m − μ_n)ᵀ Σ⁻¹ x| ≤ δ }
+```math
+B = \left\{ x \;\middle|\; \left|(\mu_m - \mu_n)^\top \Sigma^{-1} x\right| \leq \delta \right\}
 ```
 
 Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbours (shift score `S(v) > 0.5`) are selected as *hard boundary nodes* for targeted shaping.
@@ -61,13 +61,12 @@ Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbou
 
 An InfoNCE-style loss acting only on boundary nodes, using **class centroids** as proxy anchors:
 
-```
-sim_pos = −[max(0, d(z,μ⁺) − min d(z,μ⁻))]²
-sim_neg = −‖z − μⱼ‖²    (j ≠ y)
-
-                exp(sim_pos / τ)
-L = −log ─────────────────────────────────
-         exp(sim_pos/τ) + Σ exp(sim_neg/τ)
+```math
+\begin{aligned}
+&\text{sim\_pos} = -\left[\max\!\left(0,\, d(z,\mu^+) - \min_j d(z,\mu^-)\right)\right]^2 \\
+&\text{sim\_neg} = -\|z - \mu_j\|^2 \quad (j \neq y) \\
+&\mathcal{L} = -\log \frac{\exp(\text{sim\_pos}/\tau)}{\exp(\text{sim\_pos}/\tau) + \sum_{j} \exp(\text{sim\_neg}/\tau)}
+\end{aligned}
 ```
 
 The margin in `sim_pos` zeroes out the gradient for nodes already correctly separated — no wasted updates.
@@ -79,8 +78,8 @@ The margin in `sim_pos` zeroes out the gradient for nodes already correctly sepa
 
 To prevent overshooting, gradient updates are scaled by the inverse of total embedding displacement Δ<sup>(B)</sup>:
 
-```
-θ ← θ + (α / Δ^(B)) · η · ∇L
+```math
+\theta \leftarrow \theta + \frac{\alpha}{\Delta^{(B)}} \cdot \eta \cdot \nabla\mathcal{L}
 ```
 
 A virtual pre-update measures Δ<sup>(B)</sup> before committing, so larger perturbations receive smaller step sizes. This directly operationalises the theoretical error bound from Proposition 3.1.
