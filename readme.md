@@ -65,9 +65,9 @@ An InfoNCE-style loss acting only on boundary nodes, using **class centroids** a
 sim_pos = −[max(0, d(z,μ⁺) − min d(z,μ⁻))]²
 sim_neg = −‖z − μⱼ‖²    (j ≠ y)
 
-L = −log   exp(sim_pos / τ)
-           ─────────────────────────────
-    exp(sim_pos/τ) + Σ exp(sim_neg/τ)
+                exp(sim_pos / τ)
+L = −log ─────────────────────────────────
+         exp(sim_pos/τ) + Σ exp(sim_neg/τ)
 ```
 
 The margin in `sim_pos` zeroes out the gradient for nodes already correctly separated — no wasted updates.
