@@ -22,12 +22,17 @@
 
 # Overview
 
+<div style="text-align: justify">
+
 Graph Neural Networks excel at aggregating neighborhood information, yet their performance degrades near class boundaries where **graph structural entanglement** is most severe — spurious correlations from semantically irrelevant neighbors contaminate node embeddings and blur decision boundaries.
+
 
 BES is a **plug-in module** that sits on top of any pretrained GNN encoder and selectively refines only the embeddings that matter most: nodes at the decision boundary. It achieves this through three tightly coupled steps — boundary detection, contrastive shaping, and adaptive gradient scaling — with negligible overhead and no need for data augmentation.
 
+
 > **Key result:** BES improves GCN node-classification accuracy by an average of **+3.3%** across benchmarks, up to **+5.0% on WikiCS**, while also achieving state-of-the-art link prediction accuracy.
 
+</div>
 
 
 # Method
@@ -38,13 +43,19 @@ BES is a **plug-in module** that sits on top of any pretrained GNN encoder and s
 
 </div>
 
+<div style="text-align: justify">
+
 BES decomposes the latent space into **invariant** factors (class-determining structure) and **variant** factors (topological noise), then maximises the former while suppressing the latter — but only where the payoff is highest: near class boundaries.
+
+</div>
 
 <table>
 <tr>
 <td width="33%" valign="top">
 
 ### Boundary Detection
+
+<div style="text-align: justify">
 
 Nodes near class boundaries are identified via a **Mahalanobis slab criterion**:
 
@@ -54,37 +65,45 @@ B = \left\{ x \;\middle|\; \left|(\mu_m - \mu_n)^\top \Sigma^{-1} x\right| \leq 
 
 Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbours (shift score `S(v) > 0.5`) are selected as *hard boundary nodes* for targeted shaping.
 
+</div>
+
 </td>
-<td width="33%" valign="top">
+<td width="40%" valign="top">
 
 ### Gravity Loss
+
+<div style="text-align: justify">
 
 An InfoNCE-style loss acting only on boundary nodes, using **class centroids** as proxy anchors:
 
 ```math
 \begin{aligned}
-&\text{sim\_pos} = \\
-&-\left[\max\!\left(0,\, d(z,\mu^+) - \min_j d(z,\mu^-)\right)\right]^2 \\ \\
-&\text{sim\_neg} = -\|z - \mu_j\|^2 \quad (j \neq y) \\ \\
-&\mathcal{L} = \\
-&-\log \frac{\exp(\text{sim}_{pos}/\tau)}{\exp(\text{sim}_{pos}/\tau) + \sum_{j} \exp(\text{sim}_{neg}/\tau)}
+&\text{sim}_{pos} = -\left[\max\!\left(0,\, d(z,\mu^+) - \min_j d(z,\mu^-)\right)\right]^2 \\ \\
+&\text{sim}_{neg} = -\|z - \mu_j\|^2 \quad (j \neq y) \\ \\
+&\mathcal{L} = -\log \frac{\exp(\text{sim}_{pos}/\tau)}{\exp(\text{sim}_{pos}/\tau) + \sum_{j} \exp(\text{sim}_{neg}/\tau)}
 \end{aligned}
 ```
+The margin in `sim_{pos}` zeroes out the gradient for nodes already correctly separated — no wasted updates.
 
-The margin in `sim_pos` zeroes out the gradient for nodes already correctly separated — no wasted updates.
+</div>
 
 </td>
 <td width="33%" valign="top">
 
 ### Adaptive Scaling
 
+<div style="text-align: justify">
+
 To prevent overshooting, gradient updates are scaled by the inverse of total embedding displacement Δ<sup>(B)</sup>:
+
 
 ```math
 \theta \leftarrow \theta + \frac{\alpha}{\Delta^{(B)}} \cdot \eta \cdot \nabla\mathcal{L}
 ```
 
 A virtual pre-update measures Δ<sup>(B)</sup> before committing, so larger perturbations receive smaller step sizes. This directly operationalises the theoretical error bound from Proposition 3.1.
+
+</div>
 
 </td>
 </tr>
