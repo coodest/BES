@@ -78,7 +78,8 @@ An InfoNCE-style loss acting only on boundary nodes, using **class centroids** a
 
 ```math
 \begin{aligned}
-&\text{sim}^{pos} = -\left[\max\!\left(0,\, d(\Phi (x_b),\mu_b) - \min_{j \neq b, x_j \in \mathcal{B}} d(\Phi (x_j),\mu_b)\right)\right]^2  \\ \\
+&\text{sim}^{pos} = -\left[\max\!\left(0,\, d(\Phi (x_b),\mu_b)\right.\right. \\
+& \left.\left. - \min_{j \neq b,\, x_j \in \mathcal{B}} d(\Phi (x_j),\mu_b)\right)\right]^2  \\ \\
 &\text{sim}^{neg} = -\| \Phi (x_b) - \mu_j\|^2 \quad (j \neq b)  \\ \\
 &\mathcal{L} = -\log \frac{\exp(\text{sim}^{pos}/\tau)}{\sum_{j} \exp(\text{sim}^{neg}/\tau)} 
 \end{aligned}
