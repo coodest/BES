@@ -59,9 +59,13 @@ BES decomposes the latent space into **invariant** factors (class-determining st
 
 Nodes near class boundaries are identified via a **Mahalanobis slab criterion**:
 
+</div>
+
 ```math
 \mathcal{B} = \left\{ x \;\middle|\; \left|(\mu_m - \mu_n)^\top \Sigma^{-1} \Phi (x) \right| \leq \delta \right\}
 ```
+
+<div style="text-align: justify">
 
 Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbours (shift score `S(v) > 0.5`) are selected as *hard boundary nodes* for targeted shaping.
 
@@ -76,6 +80,8 @@ Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbou
 
 An InfoNCE-style loss acting only on boundary nodes, using **class centroids** as proxy anchors:
 
+</div>
+
 ```math
 \begin{aligned}
 &\text{sim}^{pos} = -\left[\max\!\left(0,\, d(\Phi (x_b),\mu_b) - \min_{j \neq b, x_j \in \mathcal{B}} d(\Phi (x_j),\mu_b)\right)\right]^2  \\ \\
@@ -83,6 +89,9 @@ An InfoNCE-style loss acting only on boundary nodes, using **class centroids** a
 &\mathcal{L} = -\log \frac{\exp(\text{sim}^{pos}/\tau)}{\sum_{j} \exp(\text{sim}^{neg}/\tau)} 
 \end{aligned}
 ```
+
+<div style="text-align: justify">
+
 The margin in $\text{sim}^{pos}$ zeroes out the gradient for nodes already correctly separated — no wasted updates.
 
 </div>
@@ -96,10 +105,13 @@ The margin in $\text{sim}^{pos}$ zeroes out the gradient for nodes already corre
 
 To prevent overshooting, gradient updates are scaled by the inverse of total embedding displacement Δ<sup>(B)</sup>:
 
+</div>
 
 ```math
 \theta \leftarrow \theta + \frac{\alpha}{\Delta^{(B)}} \cdot \eta \cdot \nabla\mathcal{L}
 ```
+
+<div style="text-align: justify">
 
 A virtual pre-update measures Δ<sup>(B)</sup> before committing, so larger perturbations receive smaller step sizes. This directly operationalises the theoretical error bound from Proposition 3.1.
 
