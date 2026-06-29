@@ -60,7 +60,7 @@ BES decomposes the latent space into **invariant** factors (class-determining st
 Nodes near class boundaries are identified via a **Mahalanobis slab criterion**:
 
 ```math
-B = \left\{ x \;\middle|\; \left|(\mu_m - \mu_n)^\top \Sigma^{-1} x\right| \leq \delta \right\}
+\mathcal{B} = \left\{ x \;\middle|\; \left|(\mu_m - \mu_n)^\top \Sigma^{-1} \Phi (x) \right| \leq \delta \right\}
 ```
 
 Within this region, nodes whose k-NN neighbourhood has >50% cross-class neighbours (shift score `S(v) > 0.5`) are selected as *hard boundary nodes* for targeted shaping.
@@ -78,12 +78,12 @@ An InfoNCE-style loss acting only on boundary nodes, using **class centroids** a
 
 ```math
 \begin{aligned}
-&\text{sim}_{pos} = -\left[\max\!\left(0,\, d(z,\mu^+) - \min_j d(z,\mu^-)\right)\right]^2 \\ \\
-&\text{sim}_{neg} = -\|z - \mu_j\|^2 \quad (j \neq y) \\ \\
-&\mathcal{L} = -\log \frac{\exp(\text{sim}_{pos}/\tau)}{\exp(\text{sim}_{pos}/\tau) + \sum_{j} \exp(\text{sim}_{neg}/\tau)}
+&\text{sim}^{pos} = -\left[\max\!\left(0,\, d(\Phi (x_b),\mu_b) - \min_{j \neq b, x_j \in \mathcal{B}} d(\Phi (x_j),\mu_b)\right)\right]^2  \\ \\
+&\text{sim}^{neg} = -\| \Phi (x_b) - \mu_j\|^2 \quad (j \neq b)  \\ \\
+&\mathcal{L} = -\log \frac{\exp(\text{sim}^{pos}/\tau)}{\sum_{j} \exp(\text{sim}^{neg}/\tau)} 
 \end{aligned}
 ```
-The margin in `sim_{pos}` zeroes out the gradient for nodes already correctly separated — no wasted updates.
+The margin in $\text{sim}^{pos}$ zeroes out the gradient for nodes already correctly separated — no wasted updates.
 
 </div>
 
